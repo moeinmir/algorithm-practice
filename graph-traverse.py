@@ -1,9 +1,5 @@
-
 from abc import abstractmethod
 import unittest
-
-def addEdge(adjacentArray,sourceNode,targetNode):
-    adjacentArray[sourceNode].append(targetNode)
 
 class Node:
     def __init__(self,data) -> None:
