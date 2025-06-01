@@ -2,9 +2,6 @@
 calculate the median of merged array of two sorted array with complexity of O(log(m+n))
 """
 
-## 40 percent of the tests fails and needs debugging
-## in case of time complexity it follows a correct logic
-
 import unittest
 import random
 import logging 
@@ -17,7 +14,7 @@ def getPossibleIndexesOfElementInMergedArray(otherSortedArray,element,index):
     if otherSortedArray[0] > element:
             return [index]
     if otherSortedArray[lastIndex] < element:
-        return [lastIndex+index]
+        return [len(otherSortedArray)+index]
     while True:
         if otherSortedArray[indexInOtherSortedArray] == element:
             return [index+indexInOtherSortedArray,index+indexInOtherSortedArray+1]
@@ -26,16 +23,12 @@ def getPossibleIndexesOfElementInMergedArray(otherSortedArray,element,index):
         elif(step==1 and otherSortedArray[indexInOtherSortedArray]>element):
             step = 2
         elif(step>1 and otherSortedArray[indexInOtherSortedArray]<element):
-            step = step//2
-            if step == 0:
-                step = 1
+            step = getDividedStep(step)
             indexInOtherSortedArray = indexInOtherSortedArray + step
             if(indexInOtherSortedArray>lastIndex):
                 indexInOtherSortedArray = lastIndex
         else:
-            step = step//2
-            if(step==0):
-                step = 1
+            step = getDividedStep(step)
             indexInOtherSortedArray = indexInOtherSortedArray -step
             if(indexInOtherSortedArray<0):
                 indexInOtherSortedArray = 0
@@ -70,16 +63,12 @@ def getMedianElementIndexIfItExistInThisArray(possibleArrayToContainMedian,other
         if(directionToMove==0):
             return indexInPossibleArrayToContainMedian
         elif(step>1 and directionToMove==-1):
-            step = step//2
-            if(step==0):
-                step =1
+            step = getDividedStep(step)
             indexInPossibleArrayToContainMedian = indexInPossibleArrayToContainMedian - step
             if(indexInPossibleArrayToContainMedian < 0):
                 indexInPossibleArrayToContainMedian = 0                
         elif(step>1 and directionToMove==1):
-            step = step//2
-            if(step==0):
-                step =1
+            step = getDividedStep(step)    
             indexInPossibleArrayToContainMedian = indexInPossibleArrayToContainMedian + step
             if(indexInPossibleArrayToContainMedian>lastIndex):
                 indexInPossibleArrayToContainMedian = lastIndex
@@ -87,6 +76,13 @@ def getMedianElementIndexIfItExistInThisArray(possibleArrayToContainMedian,other
             if whatDirectionToMove(otherSortedArray,possibleArrayToContainMedian[indexInPossibleArrayToContainMedian],indexInPossibleArrayToContainMedian,medianIndex)==0:
                 return indexInPossibleArrayToContainMedian
             return -1
+
+def getDividedStep(step):
+    if step > 1: step = (step+1)//2
+    else:step = step//2
+    if(step==0):
+        step =1
+    return step    
 
 def getMedianOfTwoSortedArray(arrayOne,arrayTwo):
     medianIndexes = getMedianIndexes(arrayOne,arrayTwo)
@@ -158,7 +154,6 @@ class TestFindingTheMidianOfToSortedArray(unittest.TestCase):
         evenCaseExpectedResult = [6,7]
         self.assertListEqual(evenCaseResult,evenCaseExpectedResult)
 
-
     def testWhatDirectionToMove(self):
         result = whatDirectionToMove(self.secondTestArray,56,4,5)
         expectedResult = 1
@@ -169,7 +164,6 @@ class TestFindingTheMidianOfToSortedArray(unittest.TestCase):
         sortedArray = mergeTwoSortedArray(self.firstTestArray,self.secondTestArray)
         expectedResult = getTheMedianOfASortedArray(sortedArray)
         self.assertEqual(result,expectedResult)
-        
         result = getMedianOfTwoSortedArray(self.firstTestArray,self.thirdTestArray)
         sortedArray = mergeTwoSortedArray(self.firstTestArray,self.thirdTestArray)
         expectedResult = getTheMedianOfASortedArray(sortedArray)
@@ -181,7 +175,7 @@ class TestFindingTheMidianOfToSortedArray(unittest.TestCase):
         minNumber = 1
         maxArrayLen = 10
         minArrayLen = 2
-        testIteration = 100
+        testIteration = 1000
         numberOfFailures = 0 
         for i in range(testIteration):
             firstArray = []
